@@ -15,7 +15,10 @@ REGEX_SPL_CHARS = re.compile('[@#$%^*()<>/\|}{~:]')
 MIMIC2_URL = 'https://mimic-api.mycroft.ai/synthesize?text='
 
 # Check for more default dialogs
-res_path = '/opt/venvs/mycroft-core/lib/python3.4/site-packages/mycroft/res/text/en-us/'
+res_path = '/opt/venvs/mycroft-core/lib/python3.4/' \
+           'site-packages/mycroft/res/text/en-us/'
+wifi_setup_path = '/usr/local/mycroft/mycroft-wifi-setup/dialog/en-us/'
+cache_dialog_path = [res_path, wifi_setup_path]
 # Path where cache is stored and not cleared on reboot/TTS change
 cache_audio_dir = '/opt/mycroft/preloaded_cache'
 cache_text_file = cache_audio_dir + '/cache_text.txt'
@@ -25,31 +28,54 @@ def generate_cache_text():
         if not os.path.exists(cache_audio_dir):
             os.mkdir(cache_audio_dir)
         f = open(cache_text_file, 'w')
-        for file in glob.glob(res_path + "*.dialog"):
-            try:
-                with open(file,'r') as fp:
-                    all_dialogs = fp.readlines()
-                    for each_dialog in all_dialogs:
-                        # split the sentences
-                        each_dialog = re.split(
-                            r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\;|\?)\s',
-                            each_dialog.strip())
-                        for each in each_dialog:
-                            if (REGEX_SPL_CHARS.search(each) == None):
-                                # Do not consider sentences with special
-                                # characters other than any punctuation
-                                # ex : <<< LOADING <<<
-                                # should not be considered
-                                f.write(each.strip() + '\n')
-                                #f.write(each)
-            except:
-                #LOG.info("Dialog Skipped")
-                pass
+        for each_path in cache_dialog_path:
+            write_cache_text(each_path, f)
+        # for file in glob.glob(res_path + "*.dialog"):
+        #     try:
+        #         with open(file,'r') as fp:
+        #             all_dialogs = fp.readlines()
+        #             for each_dialog in all_dialogs:
+        #                 # split the sentences
+        #                 each_dialog = re.split(
+        #                     r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\;|\?)\s',
+        #                     each_dialog.strip())
+        #                 for each in each_dialog:
+        #                     if (REGEX_SPL_CHARS.search(each) == None):
+        #                         # Do not consider sentences with special
+        #                         # characters other than any punctuation
+        #                         # ex : <<< LOADING <<<
+        #                         # should not be considered
+        #                         f.write(each.strip() + '\n')
+        #                         #f.write(each)
+        #     except:
+        #         #LOG.info("Dialog Skipped")
+        #         pass
         f.close()
         LOG.info("Completed generating cache")
     except:
         LOG.info("Could not open text file to write cache")
 
+def write_cache_text(cache_path, f):
+    for file in glob.glob(cache_path + "*.dialog"):
+        try:
+            with open(file, 'r') as fp:
+                all_dialogs = fp.readlines()
+                for each_dialog in all_dialogs:
+                    # split the sentences
+                    each_dialog = re.split(
+                        r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\;|\?)\s',
+                        each_dialog.strip())
+                    for each in each_dialog:
+                        if (REGEX_SPL_CHARS.search(each) == None):
+                            # Do not consider sentences with special
+                            # characters other than any punctuation
+                            # ex : <<< LOADING <<<
+                            # should not be considered
+                            f.write(each.strip() + '\n')
+                            # f.write(each)
+        except:
+            # LOG.info("Dialog Skipped")
+            pass
 
 def download_audio():
     if not os.path.isdir(cache_audio_dir + '/Mimic2'):
