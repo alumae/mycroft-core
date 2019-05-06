@@ -29,6 +29,7 @@ from mycroft.enclosure.api import EnclosureAPI
 from mycroft.configuration import Configuration
 from mycroft.messagebus.message import Message
 from mycroft.metrics import report_timing, Stopwatch
+from mycroft.audio import cache_handler
 from mycroft.util import (
     play_wav, play_mp3, check_for_signal, create_signal, resolve_resource_file
 )
@@ -176,6 +177,8 @@ class TTS:
         self.playback = PlaybackThread(self.queue)
         self.playback.start()
         self.clear_cache()
+        # After clearing cache get the pre-loaded cache
+        cache_handler.move_cache()
         self.spellings = self.load_spellings()
         self.tts_name = type(self).__name__
 

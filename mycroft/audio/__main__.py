@@ -21,6 +21,7 @@ from mycroft.configuration import Configuration
 from mycroft.messagebus.client.ws import WebsocketClient
 from mycroft.util import reset_sigint_handler, wait_for_exit_signal, \
     create_daemon, create_echo_function, check_for_signal
+from mycroft.audio import cache_handler
 from mycroft.util.log import LOG
 
 import mycroft.audio.speech as speech
@@ -39,6 +40,13 @@ def main():
     bus.on('message', create_echo_function('AUDIO', ['mycroft.audio.service']))
     audio = AudioService(bus)  # Connect audio service instance to message bus
     create_daemon(bus.run_forever)
+
+    try:
+        LOG.info("Getting Pre-loaded cache")
+        cache_handler.main()
+        LOG.info("Successfully downloaded Pre-loaded cache")
+    except:
+        LOG.info("Error in getting the pre-loaded cache")
 
     wait_for_exit_signal()
 
