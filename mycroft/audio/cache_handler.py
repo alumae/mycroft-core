@@ -34,27 +34,8 @@ def generate_cache_text():
             os.mkdir(cache_audio_dir)
         f = open(cache_text_file, 'w')
         for each_path in cache_dialog_path:
-            write_cache_text(each_path, f)
-        # for file in glob.glob(res_path + "*.dialog"):
-        #     try:
-        #         with open(file,'r') as fp:
-        #             all_dialogs = fp.readlines()
-        #             for each_dialog in all_dialogs:
-        #                 # split the sentences
-        #                 each_dialog = re.split(
-        #                     r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\;|\?)\s',
-        #                     each_dialog.strip())
-        #                 for each in each_dialog:
-        #                     if (REGEX_SPL_CHARS.search(each) == None):
-        #                         # Do not consider sentences with special
-        #                         # characters other than any punctuation
-        #                         # ex : <<< LOADING <<<
-        #                         # should not be considered
-        #                         f.write(each.strip() + '\n')
-        #                         #f.write(each)
-        #     except:
-        #         #LOG.info("Dialog Skipped")
-        #         pass
+            if os.path.exists(each_path):
+                write_cache_text(each_path, f)
         f.close()
         LOG.info("Completed generating cache")
     except:
@@ -148,6 +129,3 @@ def main():
     generate_cache_text()
     download_audio()
     move_cache()
-
-# if __name__ == '__main__':
-#     main()
