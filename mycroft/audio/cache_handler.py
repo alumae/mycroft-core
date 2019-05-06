@@ -1,8 +1,7 @@
-# Cache handler - reads all the .dialog files and peforms
-# a tts inference. Then it saves the .wav files into the
-# local device which is mark1
+# Cache handler - reads all the .dialog files (The default
+# mycroft responses) and does a tts inference.
+# It then saves the .wav files to mark1 device
 
-# read all .dialog files from 'mycroft/res/text/en-us'
 import base64
 import glob
 import os
