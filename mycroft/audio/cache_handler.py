@@ -4,8 +4,12 @@
 
 # read all .dialog files from 'mycroft/res/text/en-us'
 import base64
-import glob,os,re,shutil
-import hashlib,json
+import glob
+import os
+import re
+import shutil
+import hashlib
+import json
 from urllib import parse
 from requests_futures.sessions import FuturesSession
 from mycroft.util.log import LOG
@@ -22,6 +26,7 @@ cache_dialog_path = [res_path, wifi_setup_path]
 # Path where cache is stored and not cleared on reboot/TTS change
 cache_audio_dir = '/opt/mycroft/preloaded_cache'
 cache_text_file = cache_audio_dir + '/cache_text.txt'
+
 
 def generate_cache_text():
     try:
@@ -55,6 +60,7 @@ def generate_cache_text():
     except:
         LOG.info("Could not open text file to write cache")
 
+
 def write_cache_text(cache_path, f):
     for file in glob.glob(cache_path + "*.dialog"):
         try:
@@ -66,7 +72,7 @@ def write_cache_text(cache_path, f):
                         r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\;|\?)\s',
                         each_dialog.strip())
                     for each in each_dialog:
-                        if (REGEX_SPL_CHARS.search(each) == None):
+                        if (REGEX_SPL_CHARS.search(each) is None):
                             # Do not consider sentences with special
                             # characters other than any punctuation
                             # ex : <<< LOADING <<<
@@ -76,6 +82,7 @@ def write_cache_text(cache_path, f):
         except:
             # LOG.info("Dialog Skipped")
             pass
+
 
 def download_audio():
     if not os.path.isdir(cache_audio_dir + '/Mimic2'):
@@ -109,8 +116,8 @@ def download_audio():
                     pho_file = os.path.join(cache_audio_files, key + ".pho")
                     try:
                         with open(pho_file, "w") as cachefile:
-                            cachefile.write(json.dumps(vis)) # Mimic2
-                            #cachefile.write(str(vis)) # Mimic
+                            cachefile.write(json.dumps(vis))  # Mimic2
+                            # cachefile.write(str(vis))  # Mimic
                     except Exception:
                         # For now skip that .pho file and continue
                         # todo: Add proper log statements
@@ -118,6 +125,7 @@ def download_audio():
         LOG.info("Completed downloading cache for mimic2")
     else:
         LOG.info("Pre-loaded cache already exists")
+
 
 def move_cache():
     source = cache_audio_dir + '/Mimic2'
@@ -133,6 +141,7 @@ def move_cache():
         LOG.info("Moved all pre-loaded cache to /tmp/mycroft/cache/tts/Mimic2")
     else:
         LOG.info("No Source directory for pre-loaded cache")
+
 
 # Start here
 def main():
