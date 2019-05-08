@@ -178,7 +178,7 @@ class TTS:
         self.playback.start()
         self.clear_cache()
         # After clearing cache get the pre-loaded cache
-        cache_handler.move_cache()
+        cache_handler.copy_cache()
         self.spellings = self.load_spellings()
         self.tts_name = type(self).__name__
 

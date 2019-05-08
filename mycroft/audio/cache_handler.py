@@ -1,6 +1,23 @@
-# Cache handler - reads all the .dialog files (The default
-# mycroft responses) and does a tts inference.
-# It then saves the .wav files to mark1 device
+# Copyright 2019 Mycroft AI Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+Cache handler - reads all the .dialog files (The default
+mycroft responses) and does a tts inference.
+It then saves the .wav files to mark1 device
+
+"""
 
 import base64
 import glob
@@ -9,22 +26,25 @@ import re
 import shutil
 import hashlib
 import json
+import mycroft.util as util
 from urllib import parse
 from requests_futures.sessions import FuturesSession
+from mycroft.configuration import Configuration
 from mycroft.util.log import LOG
 
 
-REGEX_SPL_CHARS = re.compile('[@#$%^*()<>/\|}{~:]')
+REGEX_SPL_CHARS = re.compile(r'[@#$%^*()<>/\|}{~:]')
 MIMIC2_URL = 'https://mimic-api.mycroft.ai/synthesize?text='
+TTS = 'Mimic2'
 
 # Check for more default dialogs
-res_path = '/opt/venvs/mycroft-core/lib/python3.4/' \
-           'site-packages/mycroft/res/text/en-us/'
-wifi_setup_path = '/usr/local/mycroft/mycroft-wifi-setup/dialog/en-us/'
+res_path = os.path.abspath(os.path.join(os.path.abspath(__file__), '..',
+                                        '..', 'res', 'text', 'en-us'))
+wifi_setup_path = '/usr/local/mycroft/mycroft-wifi-setup/dialog/en-us'
 cache_dialog_path = [res_path, wifi_setup_path]
 # Path where cache is stored and not cleared on reboot/TTS change
-cache_audio_dir = '/opt/mycroft/preloaded_cache'
-cache_text_file = cache_audio_dir + '/cache_text.txt'
+cache_audio_dir = Configuration.get().get("preloaded_cache").get(TTS)
+cache_text_file = os.path.join(cache_audio_dir, 'cache_text.txt')
 
 
 def generate_cache_text():
@@ -42,7 +62,7 @@ def generate_cache_text():
 
 
 def write_cache_text(cache_path, f):
-    for file in glob.glob(cache_path + "*.dialog"):
+    for file in glob.glob(cache_path + "/*.dialog"):
         try:
             with open(file, 'r') as fp:
                 all_dialogs = fp.readlines()
@@ -65,9 +85,9 @@ def write_cache_text(cache_path, f):
 
 
 def download_audio():
-    if not os.path.isdir(cache_audio_dir + '/Mimic2'):
+    cache_audio_files = os.path.join(cache_audio_dir, TTS)
+    if not os.path.isdir(cache_audio_files):
         # create if the directory of pre-loaded cache does not exist
-        cache_audio_files = cache_audio_dir + '/Mimic2'
         os.mkdir(cache_audio_files)
         session = FuturesSession()
         with open(cache_text_file, 'r') as fp:
@@ -76,7 +96,7 @@ def download_audio():
                 each_dialog = each_dialog.strip()
                 key = str(hashlib.md5(
                     each_dialog.encode('utf-8', 'ignore')).hexdigest())
-                wav_file = cache_audio_files + '/' + key + '.wav'
+                wav_file = os.path.join(cache_audio_files, key + '.wav')
                 each_dialog = parse.quote(each_dialog)
 
                 mimic2_url = MIMIC2_URL + each_dialog + '&visimes=True'
@@ -107,18 +127,16 @@ def download_audio():
         LOG.info("Pre-loaded cache already exists")
 
 
-def move_cache():
-    source = cache_audio_dir + '/Mimic2'
+def copy_cache():
+    source = os.path.join(cache_audio_dir, TTS)
     if os.path.exists(source):
-        # tmp directory where tts cache is stored
-        dest = '/tmp/mycroft/cache/tts/Mimic2'
-        if not os.path.exists(dest):
-            os.makedirs(dest)
+        # get tmp directory where tts cache is stored
+        dest = util.get_cache_directory('tts/' + 'Mimic2')
         files = os.listdir(source)
         for f in files:
-            shutil.copy2(source + '/' + f, dest)
+            shutil.copy2(os.path.join(source, f), dest)
         # todo : get this path from config
-        LOG.info("Moved all pre-loaded cache to /tmp/mycroft/cache/tts/Mimic2")
+        LOG.info("Moved all pre-loaded cache to {}".format(dest))
     else:
         LOG.info("No Source directory for pre-loaded cache")
 
@@ -127,4 +145,4 @@ def move_cache():
 def main():
     generate_cache_text()
     download_audio()
-    move_cache()
+    copy_cache()
