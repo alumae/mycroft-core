@@ -858,28 +858,7 @@ def isOrdinal_et(input_str):
 
     """
 
-    lowerstr = input_str.lower()
-
-    if lowerstr.startswith("kolmas") | lowerstr.startswith("kolmanda"):
-        return 3
-
-    for suffix in ["ne", "se", ""]
-    if lowerstr[-3:] == "s":
-        # from 20 suffix is -ste*
-        lowerstr = lowerstr[:-3]
-        if lowerstr in et_numbers:
-            return et_numbers[lowerstr]
-
-    if lowerstr[-4:] in ["ende"]:
-        lowerstr = lowerstr[:-4]
-        if lowerstr in et_numbers:
-            return et_numbers[lowerstr]
-
-    if lowerstr[-2:] == "te":  # below 20 suffix is -te*
-        lowerstr = lowerstr[:-2]
-        if lowerstr in et_numbers:
-            return et_numbers[lowerstr]
-
+    # TODO
     return False
 
 
