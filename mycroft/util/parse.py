@@ -36,6 +36,10 @@ from mycroft.util.lang.parse_da import extractnumber_da
 from mycroft.util.lang.parse_da import extract_numbers_da
 from mycroft.util.lang.parse_da import extract_datetime_da
 from mycroft.util.lang.parse_da import normalize_da
+from mycroft.util.lang.parse_et import extractnumber_et
+from mycroft.util.lang.parse_et import extract_numbers_et
+from mycroft.util.lang.parse_et import extract_datetime_et
+from mycroft.util.lang.parse_et import normalize_et
 
 from .log import LOG
 
@@ -120,6 +124,8 @@ def extract_numbers(text, short_scale=True, ordinals=False, lang=None):
         return extract_numbers_it(text, short_scale, ordinals)
     elif lang_code == "da":
         return extract_numbers_da(text, short_scale, ordinals)
+    elif lang_code == "et":
+        return extract_numbers_et(text, short_scale, ordinals)
     return []
 
 
@@ -157,9 +163,11 @@ def extract_number(text, short_scale=True, ordinals=False, lang=None):
         return extractnumber_de(text)
     elif lang_code == "da":
         return extractnumber_da(text)
+    elif lang_code == "et":
+        return extractnumber_et(text)
     # TODO: extractnumber_xx for other languages
     _log_unsupported_language(lang_lower,
-                              ['en', 'es', 'pt', 'it', 'fr', 'sv', 'de', 'da'])
+                              ['en', 'es', 'pt', 'it', 'fr', 'sv', 'de', 'da', 'et'])
     return text
 
 
@@ -272,9 +280,11 @@ def extract_datetime(text, anchorDate=None, lang=None, default_time=None):
         return extract_datetime_de(text, anchorDate, default_time)
     elif lang_code == "da":
         return extract_datetime_da(text, anchorDate, default_time)
+    elif lang_code == "et":
+        return extract_datetime_et(text, anchorDate, default_time)
     # TODO: extract_datetime for other languages
     _log_unsupported_language(lang_code,
-                              ['en', 'es', 'pt', 'it', 'fr', 'sv', 'de', 'da'])
+                              ['en', 'es', 'pt', 'it', 'fr', 'sv', 'de', 'da', 'et'])
     return text
 
 
@@ -312,9 +322,11 @@ def normalize(text, lang=None, remove_articles=True):
         return normalize_de(text, remove_articles)
     elif lang_code == "da":
         return normalize_da(text, remove_articles)
+    elif lang_code == "et":
+        return normalize_et(text, remove_articles)
     # TODO: Normalization for other languages
     _log_unsupported_language(lang_code,
-                              ['en', 'es', 'pt', 'it', 'fr', 'sv', 'de', 'da'])
+                              ['en', 'es', 'pt', 'it', 'fr', 'sv', 'de', 'da', 'et'])
     return text
 
 
