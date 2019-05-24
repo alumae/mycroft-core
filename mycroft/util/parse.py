@@ -37,7 +37,6 @@ from mycroft.util.lang.parse_da import extract_numbers_da
 from mycroft.util.lang.parse_da import extract_datetime_da
 from mycroft.util.lang.parse_da import normalize_da
 from mycroft.util.lang.parse_et import extractnumber_et
-from mycroft.util.lang.parse_et import extract_numbers_et
 from mycroft.util.lang.parse_et import extract_datetime_et
 from mycroft.util.lang.parse_et import normalize_et
 
@@ -124,8 +123,6 @@ def extract_numbers(text, short_scale=True, ordinals=False, lang=None):
         return extract_numbers_it(text, short_scale, ordinals)
     elif lang_code == "da":
         return extract_numbers_da(text, short_scale, ordinals)
-    elif lang_code == "et":
-        return extract_numbers_et(text, short_scale, ordinals)
     return []
 
 
