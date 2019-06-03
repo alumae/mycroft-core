@@ -38,7 +38,9 @@ from mycroft.util.lang.format_nl import nice_number_nl
 from mycroft.util.lang.format_da import nice_number_da
 from mycroft.util.lang.format_da import nice_time_da
 from mycroft.util.lang.format_da import pronounce_number_da
-
+from mycroft.util.lang.format_et import nice_number_et
+from mycroft.util.lang.format_et import nice_time_et
+from mycroft.util.lang.format_et import pronounce_number_et
 from collections import namedtuple
 from padatious.util import expand_parentheses
 import json
@@ -278,6 +280,8 @@ def nice_number(number, lang=None, speech=True, denominators=None):
         return nice_number_nl(number, speech, denominators)
     elif lang_code == "da":
         return nice_number_da(number, speech, denominators)
+    elif lang_code == "et":
+        return nice_number_et(number, speech, denominators)
 
     # Default to the raw number for unsupported languages,
     # hopefully the STT engine will pronounce understandably.
@@ -320,6 +324,8 @@ def nice_time(dt, lang=None, speech=True, use_24hour=False,
         return nice_time_da(dt, speech, use_24hour, use_ampm)
     elif lang_code == "pt":
         return nice_time_pt(dt, speech, use_24hour, use_ampm)
+    elif lang_code == "et":
+        return nice_time_et(dt, speech, use_24hour, use_ampm)
 
     # TODO: Other languages
     return str(dt)
@@ -363,6 +369,8 @@ def pronounce_number(number, lang=None, places=2, short_scale=True,
         return pronounce_number_da(number, places=places)
     elif lang_code == "pt":
         return pronounce_number_pt(number, places=places)
+    elif lang_code == "et":
+        return pronounce_number_et(number, places=places)
 
     # Default to just returning the numeric value
     return str(number)
