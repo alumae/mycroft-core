@@ -23,13 +23,13 @@ from mycroft.util.lang.parse_common import (extract_numbers_generic,
                                             is_numeric, look_for_fractions)
 
 
-numbers_nom = "üks kaks kolm neli viis kuus seitse kaheksa üheksa kümme".split()
-numbers_gen = "ühe kahe kolme nelja viie kuue seitsme kaheksa üheksa kümne".split()
-numbers_part = "ühte kahte kolme nelja viite kuute setset kaheksat üheksat kümmet".split()
+numbers_nom = "null üks kaks kolm neli viis kuus seitse kaheksa üheksa kümme".split()
+numbers_gen = "nulli ühe kahe kolme nelja viie kuue seitsme kaheksa üheksa kümne".split()
+numbers_part = "nulli ühte kahte kolme nelja viite kuute setset kaheksat üheksat kümmet".split()
 
-numbers_ord_nom = "esimene teine kolmas neljas viies kuues seitsmes kaheksas üheksas kümnes".split()
-numbers_ord_gen = "esimese teise kolmanda neljanda viienda kuuenda seitsmenda kahsanda üheksanda kümnenda".split()
-numbers_ord_part = "esimest teist kolmandat neljandat viiendat kuuendat seitsmendat kaheksandat üheksandat kümnendat".split()
+numbers_ord_nom = "nullis esimene teine kolmas neljas viies kuues seitsmes kaheksas üheksas kümnes".split()
+numbers_ord_gen = "nullinda esimese teise kolmanda neljanda viienda kuuenda seitsmenda kahsanda üheksanda kümnenda".split()
+numbers_ord_part = "nullindat esimest teist kolmandat neljandat viiendat kuuendat seitsmendat kaheksandat üheksandat kümnendat".split()
 
 suffixes = "sse s st le l lt ks ni na ta ga".split()
 
@@ -40,21 +40,21 @@ def convert_words_to_numbers(text):
         matched = False
         for numbers_list in [numbers_nom, numbers_gen, numbers_part, numbers_ord_nom, numbers_ord_gen, numbers_ord_part]:
             if word in numbers_list:
-                result.append(str(numbers_list.index(word) + 1))
+                result.append(str(numbers_list.index(word)))
                 matched = True
                 break
         if not matched:
             for suffix in suffixes:
                 for i, number_word in enumerate(numbers_gen):
                     if word == number_word + suffix:
-                        result.append(str(i + 1))
+                        result.append(str(i))
                         matched = True
                         break
         if not matched:
             for suffix in suffixes:
                 for i, number_word in enumerate(numbers_ord_gen):
                     if word == number_word + suffix:
-                        result.append(str(i + 1))
+                        result.append(str(i))
                         matched = True
                         break
         if not matched:
